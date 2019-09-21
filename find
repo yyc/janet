@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>
+      Janet: a service worker search engine that lives in your browser
+    </title>
+    <style>
+      .header {
+        color: rgb(57, 139, 53);
+        font-family: "Futura", sans-serif;
+        text-align: center;
+      }
+      .color {
+        color: rgb(57, 139, 53);
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="header">
+      Welcome! <br />
+      Everything is fine.
+    </h1>
+    Congratulations! Janet is now installed in your browser as a
+    <a
+      href="https://developers.google.com/web/ilt/pwa/introduction-to-service-worker"
+    >
+      Service Worker </a
+    >, and also as a search enginer! You can find Janet in your list of search
+    engines and give it a cutesy
+  </body>
+</html>

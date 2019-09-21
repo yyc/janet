@@ -1,0 +1,35 @@
+<html>
+  <head profile="http://a9.com/-/spec/opensearch/1.1/">
+    <link
+      rel="search"
+      type="application/opensearchdescription+xml"
+      href="/search.xml"
+      title="Janet Search"
+    />
+    <title>
+      Janet: a service worker search engine that lives in your browser
+    </title>
+    <style>
+      .header {
+        color: rgb(57, 139, 53);
+        font-family: "Futura", sans-serif;
+        text-align: center;
+      }
+      .color {
+        color: rgb(57, 139, 53);
+      }
+    </style>
+  </head>
+  <body>
+    <script src="app.js"></script>
+    <h1 class="header">
+      Welcome! <br />
+      Everything is fine.
+    </h1>
+    To Start, search for anything below:
+    <form method="get" action="/find">
+      <input name="q" placeholder="Search for anything" />
+      <button type="submit">Search</button>
+    </form>
+  </body>
+</html>
