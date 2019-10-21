@@ -8,8 +8,18 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@webpack-cli/serve": "^0.1.8",
+    "babel-loader": "^8.0.6",
+    "babel-preset-env": "^1.7.0",
+    "css-loader": "^3.2.0",
+    "extract-loader": "^3.1.0",
+    "file-loader": "^4.2.0",
+    "html-loader": "^0.5.5",
+    "htmllint-loader": "^2.1.4",
+    "style-loader": "^1.0.0",
     "webpack": "^4.40.2",
-    "webpack-cli": "^3.3.9"
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -4,8 +4,9 @@ module.exports = {
   mode: "production", // "production" | "development" | "none"
   // Chosen mode tells webpack to use its built-in optimizations accordingly.
   entry: {
-    app: "./src/app.js",
-    sw: "./src/sw.js"
+    "app.js": "./src/app.js",
+    "sw.js": "./src/sw.js",
+    index: "./src/index.html"
   }, // string | object | array
   // defaults to ./src
   // Here the application starts executing
@@ -15,16 +16,63 @@ module.exports = {
     path: path.resolve(__dirname, "docs"), // string
     // the target directory for all output files
     // must be an absolute path (use the Node.js path module)
-    filename: "[name].js", // string
+    filename: "[name]", // string
     // the filename template for entry chunks
-    publicPath: "/janet/", // string
+    publicPath: "/", // string
     // the url to the output directory resolved relative to the HTML page
-    library: "MyLibrary", // string,
+    library: "janet", // string,
     // the name of the exported library
-    libraryTarget: "umd" // universal module definition
+    libraryTarget: "umd", // universal module definition
     // the type of the exported library
-    /* Advanced output configuration (click to show) */
-    /* Expert output configuration (on own risk) */
+    globalObject: "this"
+  },
+  module: {
+    // configuration regarding modules
+    rules: [
+      // rules for modules (configure loaders, parser options, etc.)
+      {
+        test: /\.jsx?$/,
+        include: [path.resolve(__dirname, "src")],
+        // exclude: [path.resolve(__dirname, "app/demo-files")],
+        // these are matching conditions, each accepting a regular expression or string
+        // test and include have the same behavior, both must be matched
+        // exclude must not be matched (takes preferrence over test and include)
+        // Best practices:
+        // - Use RegExp only in test and for filename matching
+        // - Use arrays of absolute paths in include and exclude
+        // - Try to avoid exclude and prefer include
+        // issuer: { test, include, exclude },
+        // conditions for the issuer (the origin of the import)
+        enforce: "pre",
+        enforce: "post",
+        // flags to apply these rules, even if they are overridden (advanced option)
+        loader: "babel-loader",
+        // the loader which should be applied, it'll be resolved relative to the context
+        // -loader suffix is no longer optional in webpack2 for clarity reasons
+        // see webpack 1 upgrade guide
+        options: {
+          presets: ["@babel/preset-env"]
+        }
+        // options for the loader
+      },
+      {
+        test: /\.html$/,
+        use: ["file-loader?name=[name].[ext]", "extract-loader", "html-loader"]
+      },
+      {
+        test: /\.css$/,
+        use: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
+      }
+    ]
+    /* Advanced module configuration (click to show) */
   },
   resolve: {
     // options for resolving module requests
@@ -72,9 +120,9 @@ module.exports = {
     contentBase: path.join(__dirname, "docs"), // boolean | string | array, static file location
     compress: true, // enable gzip compression
     historyApiFallback: true, // true for index.html upon 404, object for multiple paths
-    hot: true, // hot module replacement. Depends on HotModuleReplacementPlugin
+    hot: false, // hot module replacement. Depends on HotModuleReplacementPlugin
     https: false, // true for self-signed, object for cert authority
-    noInfo: true // only errors & warns on hot reload
+    noInfo: false // only errors & warns on hot reload
     // ...
   }
 };
