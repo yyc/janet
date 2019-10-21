@@ -1,14 +1,11 @@
 // @flow
 import Router from "./router";
 
-class PluginParameter {
+export class PluginParameter {
   value: any;
   required = false;
 
-  contructor(
-    value: boolean | string | number | null | void,
-    required: ?boolean
-  ) {
+  constructor(value: boolean | string | number | null, required: ?boolean) {
     this.value = value;
     if (required) {
       this.required = required;
@@ -16,7 +13,7 @@ class PluginParameter {
   }
 }
 
-class PluginConfig {
+export class PluginConfig {
   config: { [key: string]: string | boolean | number | PluginParameter };
 
   static fields(): Array<String> {
@@ -25,7 +22,7 @@ class PluginConfig {
 
   constructor(json: ?{ [key: string]: any }) {
     this.config = {
-      Name: new PluginParameter("", false)
+      Name: new PluginParameter("asdf")
     };
     if (typeof json !== Object) {
       return;
@@ -41,11 +38,11 @@ class PluginConfig {
   serialize(): Object {}
 }
 
-export default class Plugin<ConfigClass> {
-  static configClass = PluginConfig;
+export class Plugin<ConfigClass> {
   config: ConfigClass;
+  static configClass = PluginConfig;
 
-  static getDefaultConfig(): PluginConfig {
+  static getDefaultConfig(): ?PluginConfig {
     // The top level name will be
     return new Plugin.configClass();
   }
@@ -56,21 +53,26 @@ export default class Plugin<ConfigClass> {
   constructor(config: ConfigClass) {
     this.config = config;
     if (config == undefined) {
-      return {};
+      return;
     }
     // The bare minimum amount of loading necessary to perform a search() should be done here
     // The plugin should **NOT** do any fetching here. Put that in the activate() function instead.
   }
 
-  update() {}
+  async update(): Promise<boolean> {
+    return true;
+  }
 
-  activate(router: Router) {}
+  activate(router: Router): void {}
 
-  search(state: any, query: Array<string>) {
+  async search(query: Array<string>, state: ?any): Promise<string | boolean> {
     return false;
   }
 
-  suggest(state: any, query: Array<String>) {
+  async suggest(
+    query: Array<String>,
+    state: ?any
+  ): Promise<Array<[String, String]>> {
     return [];
   }
 }
