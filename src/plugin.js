@@ -1,4 +1,5 @@
 // @flow
+import Router from "./router";
 
 class PluginParameter {
   value: any;
@@ -63,13 +64,13 @@ export default class Plugin<ConfigClass> {
 
   update() {}
 
-  activate(router) {}
+  activate(router: Router) {}
 
-  search(state, query) {
+  search(state: any, query: Array<string>) {
     return false;
   }
 
-  suggest(state, query) {
+  suggest(state: any, query: Array<String>) {
     return [];
   }
 }
