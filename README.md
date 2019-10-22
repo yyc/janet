@@ -57,4 +57,6 @@ One of more of the functions below should be called:
 
 In both cases, if a state parameter is passed in, it will be passed into the instance's `search`/`suggest` function.
 
-### Search(query, state)
+### `search(query: Array<string>, state: ?any): string | boolean`
+
+### `suggest(query: Array<String>, state: ?any): Array<string>`
