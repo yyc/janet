@@ -51,7 +51,11 @@ module.exports = {
         // -loader suffix is no longer optional in webpack2 for clarity reasons
         // see webpack 1 upgrade guide
         options: {
-          presets: ["@babel/preset-env", "@babel/preset-flow"]
+          presets: ["@babel/preset-env", "@babel/preset-flow"],
+          plugins: [
+            "@babel/plugin-proposal-class-properties",
+            "@babel/plugin-transform-runtime"
+          ]
         }
         // options for the loader
       },
@@ -119,7 +123,7 @@ module.exports = {
     },
     contentBase: path.join(__dirname, "docs"), // boolean | string | array, static file location
     compress: true, // enable gzip compression
-    historyApiFallback: true, // true for index.html upon 404, object for multiple paths
+    historyApiFallback: false, // true for index.html upon 404, object for multiple paths
     hot: false, // hot module replacement. Depends on HotModuleReplacementPlugin
     https: false, // true for self-signed, object for cert authority
     noInfo: false // only errors & warns on hot reload

@@ -2,13 +2,15 @@
 import Router from "./router";
 
 export class PluginParameter {
+  required: boolean;
   value: any;
-  required = false;
 
   constructor(value: boolean | string | number | null, required: ?boolean) {
     this.value = value;
     if (required) {
       this.required = required;
+    } else {
+      this.required = false;
     }
   }
 }
