@@ -20,14 +20,14 @@ export default class FallbackSearchEngine extends Plugin<PluginConfig> {
 
   async search(query: Array<string>, state: ?any) {
     let queryString = encodeURIComponent(query.join(" "));
-    return `https://www.google.com/search?q=${queryString}`;
+    return `https://www.bing.com/search?q=${queryString}`;
   }
 
   async suggest(query: Array<String>, state: ?any) {
     let queryString = encodeURIComponent(query.join(" "));
     try {
       let response = await fetch(
-        "https://www.google.com/complete/search?&q=${queryString}"
+        "https://www.bing.com/complete/search?&q=${queryString}"
       );
 
       let json = await response.json();

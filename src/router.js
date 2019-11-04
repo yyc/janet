@@ -3,6 +3,8 @@ import { Plugin, PluginConfig } from "./plugin";
 import PluginIndex from "./plugins/index";
 const routerLocalStorageKey = "routerStorage";
 
+const localStorage = window.localStorage;
+
 export default class Router {
   // This class abstracts the fast storage of commands in localStorage
   // And also does the command routing
@@ -72,6 +74,7 @@ export default class Router {
     );
 
     let pluginConfig = new PluginClass.configClass(configObj);
+    let plugin = new PluginClass(PluginConfig);
     plugin.setState(pluginState);
     return plugin;
   }

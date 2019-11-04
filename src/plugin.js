@@ -1,5 +1,5 @@
 // @flow
-import Router from "./router";
+import type Router from "./router";
 
 export class PluginParameter {
   required: boolean;
