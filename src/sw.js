@@ -41,6 +41,10 @@ function find(event, query: ?string): void {
     return;
   }
 
+  if (query == "") {
+    event.respondWith(Response.redirect(`/`), 302);
+  }
+
   (query: string);
 
   let url = se.router.getSearchForQuery(query);

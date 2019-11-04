@@ -42,6 +42,7 @@ export class PluginConfig {
 
 export class Plugin<ConfigClass> {
   config: ConfigClass;
+  state: Object;
   static configClass = PluginConfig;
 
   static getDefaultConfig(): ?PluginConfig {
@@ -54,6 +55,7 @@ export class Plugin<ConfigClass> {
   // Whatever the plugin returns will be saved as the plugin's new object (useful for unsetting bad values)
   constructor(config: ConfigClass) {
     this.config = config;
+    this.state = {};
     if (config == undefined) {
       return;
     }
@@ -69,6 +71,10 @@ export class Plugin<ConfigClass> {
 
   async search(query: Array<string>, state: ?any): Promise<string | boolean> {
     return false;
+  }
+
+  async curried_search(query: Array<string>, state: ?any) {
+    return (query: Array<string>) => this.search(query, state);
   }
 
   async suggest(
