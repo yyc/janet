@@ -23,7 +23,7 @@ export default class FallbackSearchEngine extends Plugin<PluginConfig> {
     return `https://www.bing.com/search?q=${queryString}`;
   }
 
-  async suggest(query: Array<String>, state: ?any) {
+  async suggest(query: Array<string>, state: ?any) {
     let queryString = encodeURIComponent(query.join(" "));
     try {
       let response = await fetch(

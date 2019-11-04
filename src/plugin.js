@@ -55,7 +55,6 @@ export class Plugin<ConfigClass> {
   // Whatever the plugin returns will be saved as the plugin's new object (useful for unsetting bad values)
   constructor(config: ConfigClass) {
     this.config = config;
-    this.state = {};
     if (config == undefined) {
       return;
     }
@@ -69,18 +68,14 @@ export class Plugin<ConfigClass> {
 
   activate(router: Router): void {}
 
-  async search(query: Array<string>, state: ?any): Promise<string | boolean> {
+  async search(query: Array<string>, state: any): Promise<string | boolean> {
     return false;
   }
 
-  async curried_search(query: Array<string>, state: ?any) {
-    return (query: Array<string>) => this.search(query, state);
-  }
-
   async suggest(
-    query: Array<String>,
-    state: ?any
-  ): Promise<Array<[String, String]>> {
+    query: Array<string>,
+    state: any
+  ): Promise<Array<[string, string]>> {
     return [];
   }
 }

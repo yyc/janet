@@ -1,6 +1,5 @@
 // @flow
 import SearchEngine from "./searchEngine";
-import { finished } from "stream";
 import * as localForage from "localforage";
 
 localForage.config({
@@ -12,6 +11,7 @@ let se = new SearchEngine();
 
 self.addEventListener("install", event => {
   console.log("hi! Service worker is registered");
+  se.update();
 });
 
 self.addEventListener("activate", event => {
@@ -37,7 +37,7 @@ self.addEventListener("fetch", event => {
   }
 });
 
-function suggest(event, query: ?string): void {}
+async function suggest(event, query: ?string): Promise<void> {}
 async function find(event, query: ?string): Promise<void> {
   if (query == null) {
     event.respondWithText(
@@ -54,7 +54,10 @@ async function find(event, query: ?string): Promise<void> {
   (query: string);
 
   let url = await se.router.getSearchForQuery(query);
-  event.respondWith(Response.redirect(url, 302));
+  if (url) {
+    event.respondWith(Response.redirect(url, 302));
+    return;
+  }
 
   console.log("redirecting to google");
   event.respondWith(

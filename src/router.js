@@ -3,6 +3,7 @@ import * as localForage from "localforage";
 
 import { Plugin, PluginConfig } from "./plugin";
 import PluginIndex from "./plugins/index";
+import { booleanLiteral } from "@babel/types";
 
 const routerlocalForageKey = "routerStorage";
 
@@ -35,24 +36,37 @@ export default class Router {
   registerRegex(regex: string, state: ?any): void {}
 
   async getSearchForQuery(query: string): Promise<string> {
+    let results = this.getMatchingCommandsForQuery(query, searchWrapper);
+    for await (let result of results) {
+      if (typeof result == "string") {
+        (result: string);
+        return result;
+      }
+    }
     return "";
   }
 
   async getSuggestForQuery(query: string): Promise<Array<[string, string]>> {
+    let sggns = this.getMatchingCommandsForQuery(query, suggestWrapper);
     return [];
   }
 
-  async *getMatchingCommandsForQuery(
-    query: string
-  ): AsyncGenerator<Plugin<PluginConfig>, void, Plugin<PluginConfig>> {
+  async *getMatchingCommandsForQuery<T>(
+    query: string,
+    wrapper: (Plugin<PluginConfig>, Array<string>, any) => Promise<T>
+  ): AsyncGenerator<T, void, T> {
     // Tries to find a matching command
     let str_split = query.split(" ", 1);
     let command = str_split[0];
 
     if (this.config.commandSearches.hasOwnProperty(command)) {
-      let plugin = this.loadPluginWithKey(command);
+      let plugin = await this.loadPluginWithKey(command);
 
-      yield plugin;
+      let pluginState = this.tryParseJSON(
+        await localForage.getItem(`${routerlocalForageKey}/state/${command}`)
+      );
+
+      yield await wrapper(plugin, str_split, pluginState);
     }
     // try all regex matches
     for (let regexString of this.config.regexSearches) {
@@ -61,8 +75,13 @@ export default class Router {
       }
       let re = this.regexCache[regexString];
       if (query.match(re)) {
-        let plugin = this.loadPluginWithKey(regexString);
-        yield plugin;
+        let plugin = await this.loadPluginWithKey(regexString);
+        let pluginState = this.tryParseJSON(
+          await localForage.getItem(
+            `${routerlocalForageKey}/state/${regexString}`
+          )
+        );
+        yield await wrapper(plugin, str_split, pluginState);
       }
     }
 
@@ -72,16 +91,12 @@ export default class Router {
   async loadPluginWithKey(key: string): Promise<Plugin<PluginConfig>> {
     let pluginName = this.config.commandSearches[key];
     let PluginClass = PluginIndex[pluginName];
-    let pluginState = this.tryParseJSON(
-      await localForage.getItem(`${routerlocalForageKey}/state/${key}`)
-    );
     let configObj = this.tryParseJSON(
       await localForage.getItem(`${routerlocalForageKey}/config/${key}`)
     );
 
     let pluginConfig = new PluginClass.configClass(configObj);
     let plugin = new PluginClass(PluginConfig);
-    plugin.setState(pluginState);
     return plugin;
   }
 
@@ -96,4 +111,20 @@ export default class Router {
     }
     return json;
   }
+}
+
+async function searchWrapper(
+  plugin: Plugin<PluginConfig>,
+  query: Array<string>,
+  state: any
+): Promise<string | boolean> {
+  return await plugin.search(query, state);
+}
+
+async function suggestWrapper(
+  plugin: Plugin<PluginConfig>,
+  query: Array<string>,
+  state: any
+): Promise<Array<[string, string]>> {
+  return await plugin.suggest(query, state);
 }
