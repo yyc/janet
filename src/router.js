@@ -1,44 +1,50 @@
 // @flow
+import * as localForage from "localforage";
+
 import { Plugin, PluginConfig } from "./plugin";
 import PluginIndex from "./plugins/index";
-const routerLocalStorageKey = "routerStorage";
 
-const localStorage = window.localStorage;
+const routerlocalForageKey = "routerStorage";
 
 export default class Router {
-  // This class abstracts the fast storage of commands in localStorage
+  // This class abstracts the fast storage of commands in localForage
   // And also does the command routing
 
   config: Object;
   regexCache: Object;
 
   constructor() {
-    let confString = localStorage.getItem(routerLocalStorageKey);
-    if (!confString) {
-      this.config = {
-        commandSearches: {},
-        regexSearches: []
-      };
-    } else {
-      (confString: string);
-      this.config = JSON.parse(confString);
-    }
+    this.config = {
+      commandSearches: {},
+      regexSearches: []
+    };
     this.regexCache = {};
+  }
+
+  async load(): Promise<void> {
+    let confString = await localForage.getItem(routerlocalForageKey);
+    if (!confString) {
+      return;
+    }
+    (confString: string);
+    this.config = JSON.parse(confString);
   }
 
   registerCommand(key: string, state: ?any): void {}
 
   registerRegex(regex: string, state: ?any): void {}
 
-  getSearchForQuery(query: string): string {
+  async getSearchForQuery(query: string): Promise<string> {
     return "";
   }
 
-  getSuggestForQuery(query: string): Array<[string, string]> {
+  async getSuggestForQuery(query: string): Promise<Array<[string, string]>> {
     return [];
   }
 
-  *getMatchingCommandsForQuery(query: string): Iterable<Plugin<PluginConfig>> {
+  async *getMatchingCommandsForQuery(
+    query: string
+  ): AsyncGenerator<Plugin<PluginConfig>, void, Plugin<PluginConfig>> {
     // Tries to find a matching command
     let str_split = query.split(" ", 1);
     let command = str_split[0];
@@ -63,14 +69,14 @@ export default class Router {
     // TODO: function matches
   }
 
-  loadPluginWithKey(key: string): Plugin<PluginConfig> {
+  async loadPluginWithKey(key: string): Promise<Plugin<PluginConfig>> {
     let pluginName = this.config.commandSearches[key];
     let PluginClass = PluginIndex[pluginName];
     let pluginState = this.tryParseJSON(
-      localStorage.getItem(`${routerLocalStorageKey}/state/${key}`)
+      await localForage.getItem(`${routerlocalForageKey}/state/${key}`)
     );
     let configObj = this.tryParseJSON(
-      localStorage.getItem(`${routerLocalStorageKey}/config/${key}`)
+      await localForage.getItem(`${routerlocalForageKey}/config/${key}`)
     );
 
     let pluginConfig = new PluginClass.configClass(configObj);

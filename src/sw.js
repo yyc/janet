@@ -1,6 +1,12 @@
 // @flow
 import SearchEngine from "./searchEngine";
 import { finished } from "stream";
+import * as localForage from "localforage";
+
+localForage.config({
+  name: "janet",
+  version: 1.0 // bump this when there are version incompatibilities
+});
 
 let se = new SearchEngine();
 
@@ -16,7 +22,7 @@ self.addEventListener("fetch", event => {
   console.log("you tried to request for ", event.request);
   let url = new URL(event.request.url);
   console.log(url.pathname);
-  if (url.pathname != "/find" || url.pathname != "/suggest") {
+  if (url.pathname != "/find" && url.pathname != "/suggest") {
     console.log("wha");
     return fetch(event.request.url);
   }
@@ -32,7 +38,7 @@ self.addEventListener("fetch", event => {
 });
 
 function suggest(event, query: ?string): void {}
-function find(event, query: ?string): void {
+async function find(event, query: ?string): Promise<void> {
   if (query == null) {
     event.respondWithText(
       event,
@@ -47,7 +53,7 @@ function find(event, query: ?string): void {
 
   (query: string);
 
-  let url = se.router.getSearchForQuery(query);
+  let url = await se.router.getSearchForQuery(query);
   event.respondWith(Response.redirect(url, 302));
 
   console.log("redirecting to google");
